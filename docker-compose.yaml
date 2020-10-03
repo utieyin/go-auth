@@ -1,0 +1,38 @@
+version: "3.1"
+
+services:
+  db-project:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: car
+      POSTGRES_USER: car
+      POSTGRES_DB: car-app
+    ports:
+      - 5432:5432
+    volumes:
+      - data:/var/lib/postgres
+
+
+  app-project:
+    build: ./api
+    ports:
+      - 8010:8010
+    restart: on-failure
+    volumes:
+      - ./:/usr/src/app/
+    depends_on:
+      - db-project
+    env_file: .env
+    environment:
+      - APP_DB_USERNAME=car
+      - APP_DB_PASSWORD=car
+      - POSTGRES_HOST=db
+      - APP_DB_NAME=car-app
+
+
+volumes:
+  data:
+
+
+
