@@ -13,10 +13,12 @@ type HTTPClient interface {
 }
 
 const (
-	FacebookTokenUrl = "https://graph.facebook.com/debug_token?"
+	//FacebookTokenURL is the base url for fb debug 
+	FacebookTokenURL = "https://graph.facebook.com/debug_token?"
 )
 
 var (
+	//Client is an interface of type http client
 	Client HTTPClient
 )
 
