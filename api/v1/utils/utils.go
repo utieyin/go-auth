@@ -13,7 +13,7 @@ type HTTPClient interface {
 }
 
 const (
-	//FacebookTokenURL is the base url for fb debug 
+	//FacebookTokenURL is the base url for fb debug
 	FacebookTokenURL = "https://graph.facebook.com/debug_token?"
 )
 
@@ -26,10 +26,23 @@ func init() {
 	Client = &http.Client{}
 }
 
-type facebookSession struct {
+type FBDebugTokenResp struct {
+	AppID       string         `json:"app_id"`
+	Application string         `json:"application"`
+	ExpiresAt   int            `json:"expires_at"`
+	Valid       bool           `json:"is_valid"`
+	IssuedAt    int            `json:"issued_at"`
+	Scopes      []string       `json:"scopes"`
+	UserID      string         `json:"user_id"`
+	Email       string         `json:"email"`
+	Name        string         `json:"name"`
+	Error       *facebookError `json:"error"`
+}
+
+type FacebookSession struct {
 	userID    string
-	userToken string
-	appToken  string
+	UserToken string
+	AppToken  string
 }
 
 // HashPassword creates a hash of a given password
@@ -40,8 +53,8 @@ func HashPassword(p string) (string, error) {
 	return hashStr, err
 }
 
-func (fbcred *facebookSession) TokenValidation(s, fburl string, body []byte, r *http.Request) *http.Response {
-	url := fmt.Sprintf("%sinput_token=%s&access_token=%s", fburl, fbcred.appToken, fbcred.userToken)
+func (fbcred *FacebookSession) TokenValidation(fburl string) *http.Response {
+	url := fmt.Sprintf("%sinput_token=%s&access_token=%s", fburl, fbcred.AppToken, fbcred.UserToken)
 	req, _ := http.NewRequest("GET", url, nil)
 	hresp, err := Client.Do(req)
 	if err != nil {
